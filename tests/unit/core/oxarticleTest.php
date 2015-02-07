@@ -6334,12 +6334,23 @@ class Unit_Core_oxArticleTest extends OxidTestCase
      *
      * @return null
      */
-    public function testSetLoadParentData()
+    public function testGetLoadParentDataDefault()
     {
-        $oArticle = $this->getProxyClass( "oxarticle" );
-        $oArticle->setLoadParentData( true );
+        $oArticle = new oxArticle();
+        $this->assertFalse($oArticle->getLoadParentData());
+    }
 
-        $this->assertTrue( $oArticle->getNonPublicVar( "_blLoadParentData" ) );
+    /**
+     * Test set load parent data.
+     *
+     * @return null
+     */
+    public function testGetSetLoadParentDataTrue()
+    {
+        $oArticle = new oxArticle();
+        $oArticle->setLoadParentData(true);
+
+        $this->assertTrue($oArticle->getLoadParentData());
     }
 
     /**
@@ -6616,6 +6627,14 @@ class Unit_Core_oxArticleTest extends OxidTestCase
         $oA2C->oxobject2category__oxobjectid = new oxField( $testAid );
         $oA2C->oxobject2category__oxcatnid = new oxField( $testCatId );
         $oA2C->setId( $testAid );
+        $oA2C->save();
+
+        // assigning articles to category
+        $oA2C = new oxbase();
+        $oA2C->init( 'oxobject2category' );
+        $oA2C->oxobject2category__oxobjectid = new oxField( $testParentid );
+        $oA2C->oxobject2category__oxcatnid = new oxField( $testCatId );
+        $oA2C->setId( $testParentid );
         $oA2C->save();
 
         $this->assertEquals( array( $testCatId ), $oArticle->getCategoryIds( false, true) );
@@ -7306,4 +7325,84 @@ class Unit_Core_oxArticleTest extends OxidTestCase
         $this->assertEquals( 39, $oArticle->getVariantsCount() );
     }
 
+    /**
+     * @return array
+     */
+    public function providerHasAgreement()
+    {
+        return array(
+            array(1, 1, true),
+            array(0, 1, false),
+            array(1, 0, false),
+            array(0, 0, false)
+        );
+    }
+
+    /**
+     * @param $iIsIntangible
+     * @param $iShowCustomAgreement
+     * @param $blResult
+     *
+     * @dataProvider providerHasAgreement
+     */
+    public function testHasIntangibleAgreement($iIsIntangible, $iShowCustomAgreement, $blResult)
+    {
+        $oProduct = $this->_getArticleWithCustomisedAgreement($iShowCustomAgreement);
+        $oProduct->oxarticles__oxnonmaterial = new oxField($iIsIntangible);
+
+        $this->assertSame($blResult, $oProduct->hasIntangibleAgreement());
+    }
+
+    /**
+     */
+    public function testHasIntangibleAgreementWithBothIntagibleAndDownloadableArticle()
+    {
+        $oProduct = $this->_getArticleWithCustomisedAgreement(true);
+        $oProduct->oxarticles__oxnonmaterial = new oxField(true);
+        $oProduct->oxarticles__oxisdownloadable = new oxField(true);
+
+        $this->assertSame(false, $oProduct->hasIntangibleAgreement());
+    }
+
+    /**
+     * @param $iIsDownloadable
+     * @param $iShowCustomAgreement
+     * @param $blResult
+     *
+     * @dataProvider providerHasAgreement
+     */
+    public function testHasDownloadableAgreement($iIsDownloadable, $iShowCustomAgreement, $blResult)
+    {
+        $oProduct = $this->_getArticleWithCustomisedAgreement($iShowCustomAgreement);
+        $oProduct->oxarticles__oxisdownloadable = new oxField($iIsDownloadable);
+
+        $this->assertSame($blResult, $oProduct->hasDownloadableAgreement());
+    }
+
+    /**
+     */
+    public function testHasDownloadableAgreementWithBothIntagibleAndDownloadableArticle()
+    {
+        $oProduct = $this->_getArticleWithCustomisedAgreement(true);
+        $oProduct->oxarticles__oxnonmaterial = new oxField(true);
+        $oProduct->oxarticles__oxisdownloadable = new oxField(true);
+
+        $this->assertSame(true, $oProduct->hasDownloadableAgreement());
+    }
+
+    /**
+     * Returns article with set custom agreement field.
+     *
+     * @param $iShowCustomAgreement
+     *
+     * @return oxArticle
+     */
+    private function _getArticleWithCustomisedAgreement($iShowCustomAgreement)
+    {
+        $oProduct = new oxArticle();
+        $oProduct->setId('_testArticle');
+        $oProduct->oxarticles__oxshowcustomagreement = new oxField($iShowCustomAgreement);
+
+        return $oProduct;
+    }
 }

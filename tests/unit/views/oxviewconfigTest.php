@@ -2503,5 +2503,41 @@ class Unit_Views_oxviewConfigTest extends OxidTestCase
         $this->assertEquals( $sLogo, $oView->getShopLogo() );
     }
 
+    /**
+     * Data provider for test testGetSessionChallengeToken.
+     *
+     * @return array
+     */
+    public function _dpGetSessionChallengeToken()
+    {
+        return array(
+            array(false, 0, ''),
+            array(true, 1, 'session_challenge_token'),
+        );
+    }
 
+    /**
+     * /**
+     * Tests retrieve session challenge token from session.
+     *
+     * @dataProvider _dpGetSessionChallengeToken
+     *
+     * @param boolean $blIsSessionStarted                   is session started
+     * @param integer $iGetSessionChallengeTokenCalledTimes method getSessionChallengeToken expected to be called times
+     * @param string  $sToken                               Security token
+     */
+    public function testGetSessionChallengeToken($blIsSessionStarted, $iGetSessionChallengeTokenCalledTimes, $sToken)
+    {
+        /** @var oxSession|PHPUnit_Framework_MockObject_MockObject $oSession */
+        $oSession = $this->getMock('oxSession', array('isSessionStarted', 'getSessionChallengeToken'));
+
+        $oSession->expects($this->once())->method('isSessionStarted')
+            ->will($this->returnValue($blIsSessionStarted));
+        $oSession->expects($this->exactly($iGetSessionChallengeTokenCalledTimes))->method('getSessionChallengeToken')
+            ->will($this->returnValue($sToken));
+        oxRegistry::set('oxSession', $oSession);
+
+        $oViewConfig = new oxViewConfig();
+        $this->assertSame($sToken, $oViewConfig->getSessionChallengeToken());
+    }
 }

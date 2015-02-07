@@ -81,6 +81,19 @@ class Unit_Views_oxcmpUserTest extends OxidTestCase
     }
 
     /**
+     * Test setting of dgr parameter on init
+     */
+    public function testInitDynGroupAssignment()
+    {
+        modConfig::setParameter('dgr', 'testdgr');
+
+        $oView = new oxcmp_user();
+        $oView->init();
+
+        $this->assertEquals( 'testdgr', modSession::getInstance()->getVar( 'dgr' ) );
+    }
+
+    /**
      * Test view getInvitor().
      *
      * @return null
@@ -270,7 +283,7 @@ class Unit_Views_oxcmpUserTest extends OxidTestCase
         $oUserView->expects( $this->any() )->method( 'login' )->will( $this->returnValue( 'payment' ) );
         $oUserView->expects( $this->any() )->method( 'getParent' )->will( $this->returnValue( $oParent ) );
 
-        $this->assertEquals( 'payment', $oUserView->createUser() );
+        $this->assertEquals( 'payment?new_user=1&success=1', $oUserView->createUser() );
         $this->assertTrue( $oUserView->getNonPublicVar( '_blIsNewUser' ) );
     }
 
@@ -336,7 +349,7 @@ class Unit_Views_oxcmpUserTest extends OxidTestCase
      */
     public function testCaseForBug1625()
     {
-        modSession::getInstance()->setVar( 'dgr', 'oxidpricea' );
+        modSession::getInstance()->setVar( 'dgr', 'oxidnewsletter' );
         $this->assertNotNull( oxSession::getVar( 'dgr' ) );
 
         modConfig::setParameter( 'lgn_usr',  "test@oxideshop.com" );
@@ -362,13 +375,13 @@ class Unit_Views_oxcmpUserTest extends OxidTestCase
         $oCmp = $this->getMock( "oxcmp_user", array( "_afterLogin", 'getParent' ) );
         $oCmp->expects( $this->once() )->method( '_afterLogin' );
         $oCmp->expects( $this->any() )->method( 'getParent' )->will( $this->returnValue( $oParent ) );
-        $this->assertEquals( 'payment' , $oCmp->createUser() );
+        $this->assertEquals( 'payment?new_user=1&success=1' , $oCmp->createUser() );
 
         $oDb = oxDb::getDb();
 
         //
         $sUserId = $oDb->getOne( "select oxid from oxuser where oxusername like 'test%'" );
-        $this->assertTrue( ( bool ) $oDb->getOne( "select 1 from oxobject2group where oxobjectid = '$sUserId' and oxgroupsid = 'oxidpricea'" ) );
+        $this->assertTrue( ( bool ) $oDb->getOne( "select 1 from oxobject2group where oxobjectid = '$sUserId' and oxgroupsid = 'oxidnewsletter'" ) );
         $this->assertNull( oxSession::getVar( 'dgr' ) );
     }
 
@@ -494,7 +507,6 @@ class Unit_Views_oxcmpUserTest extends OxidTestCase
      */
     public function testRender()
     {
-        modConfig::setParameter('dgr', 'testdgr');
         modConfig::setParameter('invadr', 'testadr');
         modConfig::setParameter('deladr', 'testdeladr');
         modConfig::setParameter('reloadaddress', false);
@@ -507,7 +519,6 @@ class Unit_Views_oxcmpUserTest extends OxidTestCase
         $oUserView->expects( $this->atLeastOnce() )->method( 'getParent' )->will( $this->returnValue( $oParent ) );
         $oUserView->expects( $this->atLeastOnce() )->method( 'getUser' )->will( $this->returnValue( "testUser" ) );
         $this->assertEquals( 'testUser', $oUserView->render() );
-        $this->assertEquals( 'testdgr', modSession::getInstance()->getVar( 'dgr' ) );
     }
 
     /**
@@ -781,7 +792,7 @@ class Unit_Views_oxcmpUserTest extends OxidTestCase
         $this->getProxyClass("oxcmp_user");
         $oUserView = $this->getMock( 'oxcmp_userPROXY', array( 'getParent' ) );
         $oUserView->expects( $this->any() )->method( 'getParent' )->will( $this->returnValue( $oParent ) );
-        $this->assertEquals( 'payment', $oUserView->createUser() );
+        $this->assertEquals( 'payment?new_user=1&success=1', $oUserView->createUser() );
         $this->assertEquals( 'TestRemark', oxSession::getVar( 'ordrem' ) );
         $this->assertTrue( $oUserView->getNonPublicVar( '_blIsNewUser' ) );
     }
@@ -811,7 +822,7 @@ class Unit_Views_oxcmpUserTest extends OxidTestCase
         $oUserView = $this->getMock( 'oxcmp_userPROXY', array( '_afterLogin', 'getParent' ) );
         $oUserView->expects( $this->once() )->method( '_afterLogin' );
         $oUserView->expects( $this->any() )->method( 'getParent' )->will( $this->returnValue( $oParent ) );
-        $this->assertEquals( 'payment', $oUserView->createUser() );
+        $this->assertEquals( 'payment?new_user=1&success=1', $oUserView->createUser() );
         $this->assertTrue( $oUserView->getNonPublicVar( '_blIsNewUser' ) );
         $this->assertNotNull( oxSession::getVar( 'usr' ) );
     }

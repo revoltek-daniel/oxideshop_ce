@@ -386,6 +386,10 @@ class Details extends oxUBase
      */
     public function saveReview()
     {
+        if (!oxRegistry::getSession()->checkSessionChallenge()) {
+            return;
+        }
+
         if ( $this->canAcceptFormData() &&
              ( $oUser = $this->getUser() ) && ( $oProduct = $this->getProduct() ) ) {
 
@@ -427,6 +431,10 @@ class Details extends oxUBase
      */
     public function addToRecomm()
     {
+        if (!oxRegistry::getSession()->checkSessionChallenge()) {
+            return;
+        }
+
         if (!$this->getViewConfig()->getShowListmania()) {
             return;
         }
@@ -449,6 +457,10 @@ class Details extends oxUBase
      */
     public function addTags()
     {
+        if (!oxRegistry::getSession()->checkSessionChallenge()) {
+            return;
+        }
+
         $sTags  = $this->getConfig()->getRequestParameter('newTags', true );
         $sHighTag  = $this->getConfig()->getRequestParameter( 'highTags', true );
         if ( !$sTags && !$sHighTag) {
@@ -1445,9 +1457,7 @@ class Details extends oxUBase
         $oCategory = $this->getActiveCategory();
 
         if ( $this->getListType() != 'search' &&  $oCategory && $oCategory instanceof oxCategory ) {
-            if ( $sDefaultSorting = $oCategory->getDefaultSorting() ) {
-                $sArticleTable = getViewName( 'oxarticles' );
-                $sSortBy  = $sArticleTable.'.'.$sDefaultSorting;
+            if ( $sSortBy = $oCategory->getDefaultSorting() ) {
                 $sSortDir = ( $oCategory->getDefaultSortingMode() ) ? "desc" : "asc";
                 $aSorting = array ( 'sortby' => $sSortBy, 'sortdir' => $sSortDir );
             }

@@ -47,10 +47,17 @@ class Unit_Views_accountNewsletterTest extends OxidTestCase
      */
     public function testSubscribeNoSessionUser()
     {
-        $oView = $this->getMock( "Account_Newsletter", array( "getUser" ) );
-        $oView->expects( $this->once() )->method( 'getUser')->will( $this->returnValue( false ) );
-        $this->assertFalse( $oView->subscribe() );
-        $this->assertEquals( 0, $oView->getSubscriptionStatus() );
+        /** @var oxSession|PHPUnit_Framework_MockObject_MockObject $oSession */
+        $oSession = $this->getMock('oxSession', array('checkSessionChallenge'));
+        $oSession->expects($this->once())->method('checkSessionChallenge')->will($this->returnValue(true));
+        oxRegistry::set('oxSession', $oSession);
+
+        /** @var Account_Newsletter|PHPUnit_Framework_MockObject_MockObject $oView */
+        $oView = $this->getMock("Account_Newsletter", array("getUser"));
+        $oView->expects($this->once())->method('getUser')->will($this->returnValue(false));
+
+        $this->assertFalse($oView->subscribe());
+        $this->assertEquals(0, $oView->getSubscriptionStatus());
     }
 
     /**
@@ -60,19 +67,28 @@ class Unit_Views_accountNewsletterTest extends OxidTestCase
      */
     public function testSubscribeNoStatusDefined()
     {
-        $this->setRequestParam( "status", false );
+        $this->setRequestParam("status", false);
 
-        $oSubscription = $this->getMock( "oxNewsSubscribed", array( "setOptInStatus" ) );
-        $oSubscription->expects( $this->once() )->method( 'setOptInStatus')->with( $this->equalTo( 0 ) );
+        /** @var oxSession|PHPUnit_Framework_MockObject_MockObject $oSession */
+        $oSession = $this->getMock('oxSession', array('checkSessionChallenge'));
+        $oSession->expects($this->once())->method('checkSessionChallenge')->will($this->returnValue(true));
+        oxRegistry::set('oxSession', $oSession);
 
-        $oUser = $this->getMock( "oxUser", array( "removeFromGroup", "getNewsSubscription" ) );
-        $oUser->expects( $this->once() )->method( 'removeFromGroup')->with( $this->equalTo( 'oxidnewsletter' ) );
-        $oUser->expects( $this->once() )->method( 'getNewsSubscription')->will( $this->returnValue( $oSubscription ) );
+        /** @var oxNewsSubscribed|PHPUnit_Framework_MockObject_MockObject $oSubscription */
+        $oSubscription = $this->getMock("oxNewsSubscribed", array("setOptInStatus"));
+        $oSubscription->expects($this->once())->method('setOptInStatus')->with($this->equalTo(0));
 
-        $oView = $this->getMock( "Account_Newsletter", array( "getUser" ) );
-        $oView->expects( $this->once() )->method( 'getUser')->will( $this->returnValue( $oUser ) );
-        $this->assertNull( $oView->subscribe() );
-        $this->assertEquals( -1, $oView->getSubscriptionStatus() );
+        /** @var oxUser|PHPUnit_Framework_MockObject_MockObject $oUser */
+        $oUser = $this->getMock("oxUser", array("removeFromGroup", "getNewsSubscription"));
+        $oUser->expects($this->once())->method('removeFromGroup')->with($this->equalTo('oxidnewsletter'));
+        $oUser->expects($this->once())->method('getNewsSubscription')->will($this->returnValue($oSubscription));
+
+        /** @var Account_Newsletter|PHPUnit_Framework_MockObject_MockObject $oView */
+        $oView = $this->getMock("Account_Newsletter", array("getUser"));
+        $oView->expects($this->once())->method('getUser')->will($this->returnValue($oUser));
+
+        $this->assertNull($oView->subscribe());
+        $this->assertEquals(-1, $oView->getSubscriptionStatus());
     }
 
     /**
@@ -82,15 +98,22 @@ class Unit_Views_accountNewsletterTest extends OxidTestCase
      */
     public function testSubscribeCustomStatus()
     {
-        $this->setRequestParam( "status", true );
+        $this->setRequestParam("status", true);
 
-        $oUser = $this->getMock( "oxUser", array( "setNewsSubscription" ) );
-        $oUser->expects( $this->atLeastOnce() )->method( 'setNewsSubscription')->will( $this->returnValue( true ) );
+        /** @var oxSession|PHPUnit_Framework_MockObject_MockObject $oSession */
+        $oSession = $this->getMock('oxSession', array('checkSessionChallenge'));
+        $oSession->expects($this->once())->method('checkSessionChallenge')->will($this->returnValue(true));
+        oxRegistry::set('oxSession', $oSession);
 
-        $oView = $this->getMock( "Account_Newsletter", array( "getUser" ) );
-        $oView->expects( $this->once() )->method( 'getUser')->will( $this->returnValue( $oUser ) );
-        $this->assertNull( $oView->subscribe() );
-        $this->assertEquals( 1, $oView->getSubscriptionStatus() );
+        /** @var oxUser|PHPUnit_Framework_MockObject_MockObject $oUser */
+        $oUser = $this->getMock("oxUser", array("setNewsSubscription"));
+        $oUser->expects($this->atLeastOnce())->method('setNewsSubscription')->will($this->returnValue(true));
+
+        /** @var Account_Newsletter|PHPUnit_Framework_MockObject_MockObject $oView */
+        $oView = $this->getMock("Account_Newsletter", array("getUser"));
+        $oView->expects($this->once())->method('getUser')->will($this->returnValue($oUser));
+        $this->assertNull($oView->subscribe());
+        $this->assertEquals(1, $oView->getSubscriptionStatus());
     }
 
     /**

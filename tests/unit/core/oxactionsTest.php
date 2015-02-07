@@ -317,6 +317,24 @@ class Unit_Core_oxactionsTest extends OxidTestCase
     }
 
     /**
+     * getLongDesc() test case
+     * test returned long description with smarty tags when template regeneration is disabled
+     * and template is saved twice.
+     *
+     * @return null
+     */
+    public function testGetLongDescTagsWhenTemplateAlreadyGeneratedAndRegenerationDisabled()
+    {
+        $this->getConfig()->setConfigParam('blCheckTemplates', false);
+
+        $this->_oPromo->oxactions__oxlongdesc = new oxField( "[{* *}]generated" );
+        $this->_oPromo->getLongDesc();
+
+        $this->_oPromo->oxactions__oxlongdesc = new oxField( "[{* *}]regenerated" );
+        $this->assertEquals('regenerated', $this->_oPromo->getLongDesc());
+    }
+
+    /**
      * test
      */
     public function testGetBannerArticle_notAssigned()
@@ -439,12 +457,19 @@ class Unit_Core_oxactionsTest extends OxidTestCase
     /**
      * test
      */
-    public function testGetBannerLink()
+    public function testGetBannerLinkWithProcessedUrl()
     {
-        $oPromo = new oxactions();
-        $oPromo->oxactions__oxlink = new oxField( "http://www.oxid-esales.com" );
+        $sUrl = "action-link";
+        $sShopUrl = $this->getConfig()->getShopUrl();
 
-        $this->assertEquals( "http://www.oxid-esales.com", $oPromo->getBannerLink() );
+        $oUtilsUrl = $this->getMock('oxUtilsUrl', array('processUrl'));
+        $oUtilsUrl->expects($this->any())->method('processUrl')->with($sShopUrl.$sUrl)->will($this->returnValue($sUrl.'/with-params'));
+        oxRegistry::set("oxUtilsUrl", $oUtilsUrl);
+
+        $oPromo = new oxactions();
+        $oPromo->oxactions__oxlink = new oxField( $sUrl );
+
+        $this->assertEquals( $sUrl.'/with-params', $oPromo->getBannerLink() );
     }
 
     /**

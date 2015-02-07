@@ -262,6 +262,7 @@ class Unit_Admin_loginTest extends OxidTestCase
         $this->assertTrue( $oView->UNITauthorize() );
     }
 
+
     /**
      * Testing login::checklogin()
      *

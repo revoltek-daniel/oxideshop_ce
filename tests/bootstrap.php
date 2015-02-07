@@ -34,7 +34,12 @@ if ( file_exists( "test_config.local.php" ) ) {
 define( 'oxPATH', getenv('oxPATH')? getenv('oxPATH') : $sShopPath );
 define ( 'OXID_VERSION', getenv('OXID_VERSION')? getenv('OXID_VERSION') : $sShopEdition );
 
+define ( 'INSTALLSHOP', getenv('oxINSTALLSHOP')? getenv('oxINSTALLSHOP') : $blInstallShop );
+define ( 'SKIPSHOPSETUP', getenv('oxSKIPSHOPSETUP')? getenv('oxSKIPSHOPSETUP') : $blSkipShopSetup );
+define ( 'SKIPSHOPRESTORE', getenv('oxSKIPSHOPRESTORE')? getenv('oxSKIPSHOPRESTORE') : $blSkipShopRestore );
+
 define ('OXID_TEST_UTF8', getenv('OXID_TEST_UTF8')? getenv('OXID_TEST_UTF8') : $blUtf8);
+define ('OXID_VARNISH', getenv('OXID_VARNISH')? getenv('OXID_VARNISH') : $blVarnish);
 define ('PREG_FILTER', getenv('PREG_FILTER'));
 define ('TEST_DIRS', getenv('TEST_DIRS'));
 
@@ -75,7 +80,9 @@ if (!is_dir(oxCCTempDir)) {
     array_map('unlink', glob(oxCCTempDir."/*"));
 }
 
+
 require_once 'unit/test_config.inc.php';
+require_once "unit/OxidTestCase.php";
 
 define('oxADMIN_LOGIN', oxDb::getDb()->getOne("select OXUSERNAME from oxuser where oxid='oxdefaultadmin'"));
 if (getenv('oxADMIN_PASSWD')) {

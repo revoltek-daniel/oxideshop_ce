@@ -242,18 +242,24 @@ class Unit_Views_GuestbookTest extends OxidTestCase
         modSession::getInstance()->setVar( 'usr', null );
         modConfig::setParameter( 'rvw_txt', '' );
 
-        $oConfig = $this->getMock( 'oxConfig', array( 'getShopId' ) );
-        $oConfig->expects( $this->atLeastOnce() )->method( 'getShopId' )->will( $this->returnValue( '1' ) );
+        $oConfig = $this->getMock('oxConfig', array('getShopId'));
+        $oConfig->expects($this->atLeastOnce())->method('getShopId')->will($this->returnValue('1'));
 
-        $oGBEntry = $this->getMock( 'oxGbEntry', array( 'save', 'floodProtection' ) );
-        $oGBEntry->expects( $this->never() )->method( 'save' );
-        $oGBEntry->expects( $this->never() )->method( 'floodProtection' );
-        oxTestModules::addModuleObject( 'oxGBEntry', $oGBEntry );
+        $oGBEntry = $this->getMock('oxGbEntry', array('save', 'floodProtection'));
+        $oGBEntry->expects($this->never())->method('save');
+        $oGBEntry->expects($this->never())->method('floodProtection');
+        oxTestModules::addModuleObject('oxGBEntry', $oGBEntry);
 
-        $oView = $this->getMock( 'GuestBook', array( 'getConfig', 'canAcceptFormData' ) );
-        $oView->expects( $this->atLeastOnce() )->method( 'getConfig' )->will( $this->returnValue( $oConfig ) );
-        $oView->expects( $this->never() )->method( 'canAcceptFormData' );
-        $this->assertNull( $oView->saveEntry() );
+        /** @var oxSession|PHPUnit_Framework_MockObject_MockObject $oSession */
+        $oSession = $this->getMock('oxSession', array('checkSessionChallenge'));
+        $oSession->expects($this->once())->method('checkSessionChallenge')->will($this->returnValue(true));
+        oxRegistry::set('oxSession', $oSession);
+
+        /** @var GuestBook|PHPUnit_Framework_MockObject_MockObject $oView */
+        $oView = $this->getMock('GuestBook', array('getConfig', 'canAcceptFormData'));
+        $oView->expects($this->atLeastOnce())->method('getConfig')->will($this->returnValue($oConfig));
+        $oView->expects($this->never())->method('canAcceptFormData');
+        $this->assertNull($oView->saveEntry());
     }
 
     public function testSaveEntry_noshop()
@@ -261,18 +267,24 @@ class Unit_Views_GuestbookTest extends OxidTestCase
         modSession::getInstance()->setVar( 'usr', 'some_userid' );
         modConfig::setParameter( 'rvw_txt', '' );
 
-        $oConfig = $this->getMock( 'oxConfig', array( 'getShopId' ) );
-        $oConfig->expects( $this->atLeastOnce() )->method( 'getShopId' )->will( $this->returnValue( null ) );
+        $oConfig = $this->getMock('oxConfig', array('getShopId'));
+        $oConfig->expects($this->atLeastOnce())->method('getShopId')->will($this->returnValue(null));
 
-        $oGBEntry = $this->getMock( 'oxGbEntry', array( 'save', 'floodProtection' ) );
-        $oGBEntry->expects( $this->never() )->method( 'save' );
-        $oGBEntry->expects( $this->never() )->method( 'floodProtection' );
-        oxTestModules::addModuleObject( 'oxGBEntry', $oGBEntry );
+        $oGBEntry = $this->getMock('oxGbEntry', array('save', 'floodProtection'));
+        $oGBEntry->expects($this->never())->method('save');
+        $oGBEntry->expects($this->never())->method('floodProtection');
+        oxTestModules::addModuleObject('oxGBEntry', $oGBEntry);
 
-        $oView = $this->getMock( 'GuestBook', array( 'getConfig', 'canAcceptFormData' ) );
-        $oView->expects( $this->atLeastOnce() )->method( 'getConfig' )->will( $this->returnValue( $oConfig ) );
-        $oView->expects( $this->never() )->method( 'canAcceptFormData' );
-        $this->assertSame( 'guestbookentry', $oView->saveEntry() );
+        /** @var oxSession|PHPUnit_Framework_MockObject_MockObject $oSession */
+        $oSession = $this->getMock('oxSession', array('checkSessionChallenge'));
+        $oSession->expects($this->once())->method('checkSessionChallenge')->will($this->returnValue(true));
+        oxRegistry::set('oxSession', $oSession);
+
+        /** @var GuestBook|PHPUnit_Framework_MockObject_MockObject $oView */
+        $oView = $this->getMock('GuestBook', array('getConfig', 'canAcceptFormData'));
+        $oView->expects($this->atLeastOnce())->method('getConfig')->will($this->returnValue($oConfig));
+        $oView->expects($this->never())->method('canAcceptFormData');
+        $this->assertSame('guestbookentry', $oView->saveEntry());
     }
 
     public function testSaveEntry_noreview()
@@ -280,18 +292,24 @@ class Unit_Views_GuestbookTest extends OxidTestCase
         modSession::getInstance()->setVar( 'usr', 'some_userid' );
         modConfig::setParameter( 'rvw_txt', '' );
 
-        $oConfig = $this->getMock( 'oxConfig', array( 'getShopId' ) );
-        $oConfig->expects( $this->atLeastOnce() )->method( 'getShopId' )->will( $this->returnValue( '1' ) );
+        $oConfig = $this->getMock('oxConfig', array('getShopId'));
+        $oConfig->expects($this->atLeastOnce())->method('getShopId')->will($this->returnValue('1'));
 
-        $oGBEntry = $this->getMock( 'oxGbEntry', array( 'save', 'floodProtection' ) );
-        $oGBEntry->expects( $this->never() )->method( 'save' );
-        $oGBEntry->expects( $this->never() )->method( 'floodProtection' );
-        oxTestModules::addModuleObject( 'oxGBEntry', $oGBEntry );
+        $oGBEntry = $this->getMock('oxGbEntry', array('save', 'floodProtection'));
+        $oGBEntry->expects($this->never())->method('save');
+        $oGBEntry->expects($this->never())->method('floodProtection');
+        oxTestModules::addModuleObject('oxGBEntry', $oGBEntry);
 
-        $oView = $this->getMock( 'GuestBook', array( 'getConfig', 'canAcceptFormData' ) );
-        $oView->expects( $this->atLeastOnce() )->method( 'getConfig' )->will( $this->returnValue( $oConfig ) );
-        $oView->expects( $this->never() )->method( 'canAcceptFormData' );
-        $this->assertSame( 'guestbook', $oView->saveEntry() );
+        /** @var oxSession|PHPUnit_Framework_MockObject_MockObject $oSession */
+        $oSession = $this->getMock('oxSession', array('checkSessionChallenge'));
+        $oSession->expects($this->once())->method('checkSessionChallenge')->will($this->returnValue(true));
+        oxRegistry::set('oxSession', $oSession);
+
+        /** @var GuestBook|PHPUnit_Framework_MockObject_MockObject $oView */
+        $oView = $this->getMock('GuestBook', array('getConfig', 'canAcceptFormData'));
+        $oView->expects($this->atLeastOnce())->method('getConfig')->will($this->returnValue($oConfig));
+        $oView->expects($this->never())->method('canAcceptFormData');
+        $this->assertSame('guestbook', $oView->saveEntry());
     }
 
     public function testSaveEntry_floodfailed()
@@ -299,18 +317,24 @@ class Unit_Views_GuestbookTest extends OxidTestCase
         modSession::getInstance()->setVar( 'usr', 'some_userid' );
         modConfig::setParameter( 'rvw_txt', 'some review' );
 
-        $oConfig = $this->getMock( 'oxConfig', array( 'getShopId' ) );
-        $oConfig->expects( $this->atLeastOnce() )->method( 'getShopId' )->will( $this->returnValue( '1' ) );
+        $oConfig = $this->getMock('oxConfig', array('getShopId'));
+        $oConfig->expects($this->atLeastOnce())->method('getShopId')->will($this->returnValue('1'));
 
-        $oGBEntry = $this->getMock( 'oxGbEntry', array( 'save', 'floodProtection' ) );
-        $oGBEntry->expects( $this->never() )->method( 'save' );
-        $oGBEntry->expects( $this->once() )->method( 'floodProtection' )->will( $this->returnValue( true ) );
-        oxTestModules::addModuleObject( 'oxGBEntry', $oGBEntry );
+        $oGBEntry = $this->getMock('oxGbEntry', array('save', 'floodProtection'));
+        $oGBEntry->expects($this->never())->method('save');
+        $oGBEntry->expects($this->once())->method('floodProtection')->will($this->returnValue(true));
+        oxTestModules::addModuleObject('oxGBEntry', $oGBEntry);
 
-        $oView = $this->getMock( 'GuestBook', array( 'getConfig', 'canAcceptFormData' ) );
-        $oView->expects( $this->atLeastOnce() )->method( 'getConfig' )->will( $this->returnValue( $oConfig ) );
-        $oView->expects( $this->never() )->method( 'canAcceptFormData' );
-        $this->assertSame( 'guestbookentry', $oView->saveEntry() );
+        /** @var oxSession|PHPUnit_Framework_MockObject_MockObject $oSession */
+        $oSession = $this->getMock('oxSession', array('checkSessionChallenge'));
+        $oSession->expects($this->once())->method('checkSessionChallenge')->will($this->returnValue(true));
+        oxRegistry::set('oxSession', $oSession);
+
+        /** @var GuestBook|PHPUnit_Framework_MockObject_MockObject $oView */
+        $oView = $this->getMock('GuestBook', array('getConfig', 'canAcceptFormData'));
+        $oView->expects($this->atLeastOnce())->method('getConfig')->will($this->returnValue($oConfig));
+        $oView->expects($this->never())->method('canAcceptFormData');
+        $this->assertSame('guestbookentry', $oView->saveEntry());
     }
 
     public function testSaveEntry_savecall()
@@ -318,18 +342,24 @@ class Unit_Views_GuestbookTest extends OxidTestCase
         modSession::getInstance()->setVar( 'usr', 'some_userid' );
         modConfig::setParameter( 'rvw_txt', 'some review' );
 
-        $oConfig = $this->getMock( 'oxConfig', array( 'getShopId' ) );
-        $oConfig->expects( $this->atLeastOnce() )->method( 'getShopId' )->will( $this->returnValue( '1' ) );
+        $oConfig = $this->getMock('oxConfig', array('getShopId'));
+        $oConfig->expects($this->atLeastOnce())->method('getShopId')->will($this->returnValue('1'));
 
-        $oGBEntry = $this->getMock( 'oxGbEntry', array( 'save', 'floodProtection' ) );
-        $oGBEntry->expects( $this->once() )->method( 'save' );
-        $oGBEntry->expects( $this->once() )->method( 'floodProtection' )->will( $this->returnValue( false ) );
-        oxTestModules::addModuleObject( 'oxGBEntry', $oGBEntry );
+        $oGBEntry = $this->getMock('oxGbEntry', array('save', 'floodProtection'));
+        $oGBEntry->expects($this->once())->method('save');
+        $oGBEntry->expects($this->once())->method('floodProtection')->will($this->returnValue(false));
+        oxTestModules::addModuleObject('oxGBEntry', $oGBEntry);
 
-        $oView = $this->getMock( 'GuestBook', array( 'getConfig', 'canAcceptFormData' ) );
-        $oView->expects( $this->atLeastOnce() )->method( 'getConfig' )->will( $this->returnValue( $oConfig ) );
-        $oView->expects( $this->once() )->method( 'canAcceptFormData' )->will( $this->returnValue( true ) );
-        $this->assertSame( 'guestbook', $oView->saveEntry() );
+        /** @var oxSession|PHPUnit_Framework_MockObject_MockObject $oSession */
+        $oSession = $this->getMock('oxSession', array('checkSessionChallenge'));
+        $oSession->expects($this->once())->method('checkSessionChallenge')->will($this->returnValue(true));
+        oxRegistry::set('oxSession', $oSession);
+
+        /** @var GuestBook|PHPUnit_Framework_MockObject_MockObject $oView */
+        $oView = $this->getMock('GuestBook', array('getConfig', 'canAcceptFormData'));
+        $oView->expects($this->atLeastOnce())->method('getConfig')->will($this->returnValue($oConfig));
+        $oView->expects($this->once())->method('canAcceptFormData')->will($this->returnValue(true));
+        $this->assertSame('guestbook', $oView->saveEntry());
     }
 
     public function testSaveEntry_nosavecall()
@@ -337,17 +367,22 @@ class Unit_Views_GuestbookTest extends OxidTestCase
         modSession::getInstance()->setVar( 'usr', 'some_userid' );
         modConfig::setParameter( 'rvw_txt', 'some review' );
 
-        $oConfig = $this->getMock( 'oxConfig', array( 'getShopId' ) );
-        $oConfig->expects( $this->atLeastOnce() )->method( 'getShopId' )->will( $this->returnValue( '1' ) );
+        $oConfig = $this->getMock('oxConfig', array('getShopId'));
+        $oConfig->expects($this->atLeastOnce())->method('getShopId')->will($this->returnValue('1'));
 
-        $oGBEntry = $this->getMock( 'oxGbEntry', array( 'save', 'floodProtection' ) );
-        $oGBEntry->expects( $this->never() )->method( 'save' );
-        $oGBEntry->expects( $this->once() )->method( 'floodProtection' )->will( $this->returnValue( false ) );
-        oxTestModules::addModuleObject( 'oxGBEntry', $oGBEntry );
+        $oGBEntry = $this->getMock('oxGbEntry', array('save', 'floodProtection'));
+        $oGBEntry->expects($this->never())->method('save');
+        $oGBEntry->expects($this->once())->method('floodProtection')->will($this->returnValue(false));
+        oxTestModules::addModuleObject('oxGBEntry', $oGBEntry);
 
-        $oView = $this->getMock( 'GuestBook', array( 'getConfig', 'canAcceptFormData' ) );
-        $oView->expects( $this->atLeastOnce() )->method( 'getConfig' )->will( $this->returnValue( $oConfig ) );
-        $oView->expects( $this->once() )->method( 'canAcceptFormData' )->will( $this->returnValue( false ) );
-        $this->assertSame( 'guestbook', $oView->saveEntry() );
+        /** @var oxSession|PHPUnit_Framework_MockObject_MockObject $oSession */
+        $oSession = $this->getMock('oxSession', array('checkSessionChallenge'));
+        $oSession->expects($this->once())->method('checkSessionChallenge')->will($this->returnValue(true));
+        oxRegistry::set('oxSession', $oSession);
+
+        $oView = $this->getMock('GuestBook', array('getConfig', 'canAcceptFormData'));
+        $oView->expects($this->atLeastOnce())->method('getConfig')->will($this->returnValue($oConfig));
+        $oView->expects($this->once())->method('canAcceptFormData')->will($this->returnValue(false));
+        $this->assertSame('guestbook', $oView->saveEntry());
     }
 }

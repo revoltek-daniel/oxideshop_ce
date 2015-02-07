@@ -25,8 +25,10 @@ require_once realpath( "." ).'/unit/test_config.inc.php';
 
 class Unit_Views_oxcmpBasketTest extends OxidTestCase
 {
+
     public function testToBasketReturnsNull()
     {
+        /** @var oxcmp_basket|PHPUnit_Framework_MockObject_MockObject $o */
         $o = $this->getMock('oxcmp_basket', array('_getItems'));
         $o->expects($this->once())->method('_getItems')->will($this->returnValue(false));
 
@@ -40,33 +42,36 @@ class Unit_Views_oxcmpBasketTest extends OxidTestCase
     {
         $aProducts = array(
             'sProductId' => array(
-                'am' => 10,
-                'sel' => null,
-                'persparam' => null,
-                'override'  => 0,
+                'am'           => 10,
+                'sel'          => null,
+                'persparam'    => null,
+                'override'     => 0,
                 'basketitemid' => ''
             )
         );
 
+        /** @var oxBasketItem|PHPUnit_Framework_MockObject_MockObject $oBItem */
         $oBItem = $this->getMock('oxBasketItem', array('getTitle', 'getProductId', 'getAmount', 'getdBundledAmount'));
         $oBItem->expects($this->once())->method('getTitle')->will($this->returnValue('ret:getTitle'));
         $oBItem->expects($this->once())->method('getProductId')->will($this->returnValue('ret:getProductId'));
         $oBItem->expects($this->once())->method('getAmount')->will($this->returnValue('ret:getAmount'));
         $oBItem->expects($this->once())->method('getdBundledAmount')->will($this->returnValue('ret:getdBundledAmount'));
 
+        /** @var oxConfig|PHPUnit_Framework_MockObject_MockObject $oConfig */
         $oConfig = $this->getMock('oxConfig', array('getConfigParam'));
         $oConfig->expects($this->at(0))->method('getConfigParam')->with($this->equalTo('iNewBasketItemMessage'))->will($this->returnValue('2'));
         $oConfig->expects($this->at(1))->method('getConfigParam')->with($this->equalTo('iNewBasketItemMessage'))->will($this->returnValue('2'));
 
+        /** @var oxcmp_basket|PHPUnit_Framework_MockObject_MockObject $o */
         $o = $this->getMock('oxcmp_basket', array('_getItems', '_setLastCallFnc', '_addItems', 'getSession', 'getConfig'));
         $o->expects($this->once())->method('_getItems')->will($this->returnValue($aProducts));
         $o->expects($this->once())->method('_setLastCallFnc')->with($this->equalTo('tobasket'))->will($this->returnValue(null));
         $o->expects($this->once())->method('_addItems')->with($this->equalTo($aProducts))->will($this->returnValue($oBItem));
         $o->expects($this->exactly(2))->method('getConfig')->will($this->returnValue($oConfig));
 
-        $this->assertEquals( "start?", $o->tobasket());
+        $this->assertEquals("start?", $o->tobasket());
 
-        $oNewItem = $this->getSessionParam( '_newitem' );
+        $oNewItem = $this->getSessionParam('_newitem');
         $this->assertTrue($oNewItem instanceof stdClass);
         $this->assertEquals('ret:getTitle', $oNewItem->sTitle);
         $this->assertEquals('ret:getProductId', $oNewItem->sId);
@@ -78,23 +83,26 @@ class Unit_Views_oxcmpBasketTest extends OxidTestCase
     {
         $aProducts = array(
             'sProductId' => array(
-                'am' => 10,
-                'sel' => null,
-                'persparam' => null,
-                'override'  => 0,
+                'am'           => 10,
+                'sel'          => null,
+                'persparam'    => null,
+                'override'     => 0,
                 'basketitemid' => ''
             )
         );
 
+        /** @var oxBasketItem|PHPUnit_Framework_MockObject_MockObject $oBItem */
         $oBItem = $this->getMock('oxBasketItem', array('getTitle', 'getProductId', 'getAmount', 'getdBundledAmount'));
         $oBItem->expects($this->never())->method('getTitle')->will($this->returnValue('ret:getTitle'));
         $oBItem->expects($this->never())->method('getProductId')->will($this->returnValue('ret:getProductId'));
         $oBItem->expects($this->never())->method('getAmount')->will($this->returnValue('ret:getAmount'));
         $oBItem->expects($this->never())->method('getdBundledAmount')->will($this->returnValue('ret:getdBundledAmount'));
 
+        /** @var oxConfig|PHPUnit_Framework_MockObject_MockObject $oConfig */
         $oConfig = $this->getMock('oxConfig', array('getConfigParam'));
         $oConfig->expects($this->once())->method('getConfigParam')->with($this->equalTo('iNewBasketItemMessage'))->will($this->returnValue('0'));
 
+        /** @var oxcmp_basket|PHPUnit_Framework_MockObject_MockObject $o */
         $o = $this->getMock('oxcmp_basket', array('_getItems', '_setLastCallFnc', '_addItems', 'getSession', 'getConfig', '_getRedirectUrl'));
         $o->expects($this->once())->method('_getItems')->will($this->returnValue($aProducts));
         $o->expects($this->once())->method('_setLastCallFnc')->with($this->equalTo('tobasket'))->will($this->returnValue(null));
@@ -104,7 +112,7 @@ class Unit_Views_oxcmpBasketTest extends OxidTestCase
 
         $this->assertEquals('new url', $o->tobasket());
 
-        $oNewItem = oxSession::getVar( '_newitem' );
+        $oNewItem = oxRegistry::getSession()->getVariable('_newitem');
         $this->assertSame(null, $oNewItem);
     }
 

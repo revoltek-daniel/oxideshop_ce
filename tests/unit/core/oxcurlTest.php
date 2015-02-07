@@ -75,6 +75,20 @@ class Unit_Core_oxCurlTest extends OxidTestCase
     /**
      * Test oxCurl::getQuery()
      */
+    public function testGetQuery_setParameterManyTimes_getQueryFromParameters()
+    {
+        $oCurl = new oxCurl();
+        $oCurl->setParameters( array( 'param1'=>'value1', 'param2' => 'values2' ) );
+        $this->assertEquals( 'param1=value1&param2=values2', $oCurl->getQuery() );
+
+        $oCurl->setParameters( array( 'param3'=>'value3', 'param4' => 'values4' ) );
+        $this->assertEquals( 'param3=value3&param4=values4', $oCurl->getQuery() );
+
+    }
+
+    /**
+     * Test oxCurl::getQuery()
+     */
     public function testGetQuery_setParameterNotUtf_getQueryFromParameters()
     {
         $oCurl = new oxCurl();
@@ -322,6 +336,20 @@ class Unit_Core_oxCurlTest extends OxidTestCase
         $oCurl->expects( $this->once() )->method( '_close' );
 
         $this->assertEquals( 'rParam1=rValue1', $oCurl->execute() );
+    }
+
+    /**
+     * Test oxCurl::getStatusCode()
+     */
+    public function testGetStatusCode()
+    {
+        $oCurl = $this->getMock( 'oxCurl', array( "_execute" ) );
+
+        $this->assertSame(null, $oCurl->getStatusCode());
+
+        $oCurl->execute();
+
+        $this->assertSame(0, $oCurl->getStatusCode());
     }
 
     /**

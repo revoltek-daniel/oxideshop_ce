@@ -370,6 +370,7 @@ class oxOrderArticle extends oxBase implements oxIArticle
 
             $sArticleId = $sArticleId ? $sArticleId : $this->getProductId();
             $oArticle = oxNew( "oxArticle" );
+            $oArticle->setLoadParentData(true);
             if ( $oArticle->load( $sArticleId ) ) {
                 $this->_oOrderArticle = $oArticle;
             }
@@ -800,7 +801,7 @@ class oxOrderArticle extends oxBase implements oxIArticle
     /**
      * Get article
      *
-     * @return object
+     * @return oxArticle
      */
     public function getArticle()
     {

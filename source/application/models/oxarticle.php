@@ -397,8 +397,8 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      */
     protected $_aCopyParentField = array('oxarticles__oxnonmaterial',
                                          'oxarticles__oxfreeshipping',
-                                         //'oxarticles__oxremindactive',
-                                         'oxarticles__oxisdownloadable');
+                                         'oxarticles__oxisdownloadable',
+                                         'oxarticles__oxshowcustomagreement');
 
     /**
      * Multidimensional variant tree structure
@@ -768,6 +768,16 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     }
 
     /**
+     * Getter for do we load parent data
+     *
+     * @return bool
+     */
+    public function getLoadParentData()
+    {
+        return $this->_blLoadParentData;
+    }
+
+    /**
      * Set _blSkipAbPrice value. If is set to true, then "From price" is not calculated for this object.
      *
      * @param bool $blSkipAbPrice Whether to skip "From" price loading
@@ -884,12 +894,15 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      */
     protected function _loadFromDb( $sOXID )
     {
+
         $sSelect = $this->buildSelectString( array( $this->getViewName().".oxid" => $sOXID ));
+
 
         $aData = oxDb::getDb( oxDb::FETCH_MODE_ASSOC )->getRow( $sSelect );
 
         return $aData;
     }
+
 
     /**
      * Loads object data from DB (object data ID must be passed to method).
@@ -1256,6 +1269,26 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     }
 
     /**
+     * Returns if article has intangible agreement with which customer will have to agree.
+     *
+     * @return bool
+     */
+    public function hasIntangibleAgreement()
+    {
+        return $this->oxarticles__oxshowcustomagreement->value && $this->oxarticles__oxnonmaterial->value && !$this->hasDownloadableAgreement();
+    }
+
+    /**
+     * Returns if article has downloadable agreement with which customer will have to agree.
+     *
+     * @return bool
+     */
+    public function hasDownloadableAgreement()
+    {
+        return $this->oxarticles__oxshowcustomagreement->value && $this->oxarticles__oxisdownloadable->value;
+    }
+
+    /**
      * Returns variants selections lists array
      *
      * @param array  $aFilterIds    ids of active selections [optional]
@@ -1577,7 +1610,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             }
         }
 
-        return self::$_aArticleCats[$this->getId()] = $aRet;
+        return self::$_aArticleCats[$this->getId()] = array_unique($aRet);
     }
 
     /**
@@ -2599,8 +2632,8 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             $sUrl = $this->getConfig()->getShopUrl( $iLang, false );
         }
 
-        $sUrl .= "index.php?cl=details" . ( $blAddId ? "&amp;anid=".$this->getId() : "" );
-        return $sUrl . ( isset( $this->_aStdAddParams[$iLang] ) ? "&amp;". $this->_aStdAddParams[$iLang] : "" );
+        $sUrl .= 'index.php?cl=details' . ( $blAddId ? '&amp;anid=' . urlencode($this->getId()) : '' );
+        return $sUrl . ( isset( $this->_aStdAddParams[$iLang] ) ? '&amp;' . $this->_aStdAddParams[$iLang] : '' );
     }
 
     /**
@@ -3337,7 +3370,9 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     {
         startProfile(__FUNCTION__);
         $oPrice->setVAT( $dVat );
-        if ( ($dVat = oxRegistry::get("oxVatSelector")->getArticleUserVat($this)) !== false ) {
+        /** @var oxVatSelector $oVatSelector */
+        $oVatSelector = oxRegistry::get("oxVatSelector");
+        if ( ($dVat = $oVatSelector->getArticleUserVat($this)) !== false ) {
             $oPrice->setUserVat( $dVat );
         }
         stopProfile(__FUNCTION__);
@@ -3965,6 +4000,9 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      */
     protected function _update()
     {
+
+        $this->setUpdateSeo(true);
+        $this->_setUpdateSeoOnFieldChange('oxtitle');
 
         $this->_skipSaveFields();
 

@@ -43,20 +43,19 @@ class Download extends oxUBase
      * and outputs file to buffer.
      *
      * If token is not valid, redirects to start page.
-     *
-     * @return null
      */
     public function render()
     {
-        $sFileOrderId = oxConfig::getParameter('sorderfileid');
+        $sFileOrderId = oxRegistry::getConfig()->getRequestParameter('sorderfileid');
 
         if ( $sFileOrderId ) {
             $oArticleFile = oxNew('oxFile');
             try {
+                /** @var oxOrderFile $oOrderFile */
                 $oOrderFile = oxNew('oxOrderFile');
                 if ( $oOrderFile->load($sFileOrderId) ) {
-                    $sFileId = $oOrderFile->processOrderFile();
-                    if ( $sFileId && $oArticleFile->load($sFileId) ) {
+                    $sFileId = $oOrderFile->getFileId();
+                    if ( $sFileId && $oArticleFile->load($sFileId) && $oArticleFile->exist() && $oOrderFile->processOrderFile() ) {
                         $oArticleFile->download();
                     } else {
                         $sError = "ERROR_MESSAGE_FILE_DOESNOT_EXIST";
@@ -72,7 +71,7 @@ class Download extends oxUBase
             $oEx = new oxExceptionToDisplay();
             $oEx->setMessage( $sError );
             oxRegistry::get("oxUtilsView")->addErrorToDisplay( $oEx, false );
-            oxRegistry::getUtils()->redirect( oxRegistry::getConfig()->getShopUrl() . 'index.php?cl=start&showexceptionpage=1');
+            oxRegistry::getUtils()->redirect( oxRegistry::getConfig()->getShopUrl() . 'index.php?cl=account_downloads');
         }
     }
 }

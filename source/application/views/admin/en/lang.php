@@ -384,6 +384,7 @@ $aLang = array(
 'ARTICLE_EXTEND_QUESTIONEMAIL'                             => 'Alt. Contact',
 'ARTICLE_EXTEND_ISSEARCH'                                  => 'Searchable',
 'ARTICLE_EXTEND_ISCONFIGURABLE'                            => 'Product can be customized',
+'ARTICLE_EXTEND_SHOWCUSTOMAGREEMENT'                       => 'Confirm terms and conditions',
 'ARTICLE_EXTEND_NONMATERIAL'                               => 'Intangible Product',
 'ARTICLE_EXTEND_FREESHIPPING'                              => 'Free Shipping',
 'ARTICLE_EXTEND_BLFIXEDPRICE'                              => 'Deactivate Price Alert',
@@ -1161,6 +1162,7 @@ $aLang = array(
 'SHOP_CONFIG_ALLOWUNEVENAMOUNTS'                           => 'Allow fraction Quantities (e.g. 1.5)',
 'SHOP_CONFIG_BIDIRECTCROSS'                                => 'Enable bidirectional Crosselling',
 'SHOP_CONFIG_CONFIRMAGB'                                   => 'Users have to Confirm General Terms and Conditions during Check-Out',
+'SHOP_CONFIG_ENABLE_INTANGIBLE_PRODUCTS_AGREEMENT'         => 'Users have to confirm terms and conditions for downloadable and intangible products during the check-out',
 'SHOP_CONFIG_SHOWORDERBUTTONONTHETOP'                      => 'Show an additional "Order now" button at the top in 4th order step (by default "Order now" button is shown only on the bottom of the page).',
 'SHOP_CONFIG_CALCULATEVATFORDELIVERY'                      => 'Display shipping costs as net price and VAT (instead of gross) in shopping cart and invoice',
 'SHOP_CONFIG_CALCDELVATONTOP'                              => 'Enter Shipping Costs as net Price (plus VAT)',
@@ -1504,6 +1506,7 @@ $aLang = array(
 'USERGROUP_LIST_MENUSUBITEM'                               => 'User Groups',
 'USERGROUP_MAIN_MEMBERINGROUP'                             => 'User Group Members',
 'USERGROUP_MAIN_ALLMEMBERS'                                => 'All Users',
+'USERGROUP_ID'                                             => 'Group id',
 'VENDOR_LIST_MENUITEM'                                     => 'Master Settings',
 'VENDOR_LIST_MENUSUBITEM'                                  => 'Distributors',
 'VENDOR_LIST_TITLE'                                        => '[OXID Vendor Administration]',
@@ -1853,6 +1856,14 @@ $aLang = array(
 'serial_added'                                             => 'License key has beend added',
 'serial_updated'                                           => 'License key has been updated',
 
+// Shop licensing problems
+'SHOP_LICENSE_ERROR_GRACE_EXPIRED'                         => 'The license key of your OXID eShop finally expired. Please contact the Technical Support.',
+'SHOP_LICENSE_ERROR_GRACE_WILL_EXPIRE'                     => 'The license key of your OXID eShop is expired. OXID eShop will go offline within 24 hours. Please enter a valid license key or contact the Technical Support!',
+'SHOP_LICENSE_ERROR_shop_unlicensed'                       => 'A problem with the license key of your OXID eShop occurred. That\'s why a hidden countdown of 7 days was started. After this period OXID eShop will go offline. Please enter the valid license key once again or contact the technical support!',
+'SHOP_LICENSE_ERROR_serial_expired'                        => 'The license key of your OXID eShop expired. That\'s why a hidden countdown of 7 days was started. After this period OXID eShop will go offline. Please enter a valid license key or contact the technical support!',
+'SHOP_LICENSE_ERROR_incorrect_mandate_amount'              => 'The number of the licensed sub-shops exceeded. That\'s why a hidden countdown of 7 days was started. After this period OXID eShop will go offline. Please enter a valid license key or contact the technical support!',
+'SHOP_LICENSE_ERROR_INFORMATION'                           => 'OXID eShop license information',
+
 'SHOP_OPTIONS_GROUP_GLOBAL'                                => 'Global',
 'SHOP_OPTIONS_GROUP_SEARCH'                                => 'Search',
 'SHOP_OPTIONS_GROUP_STOCK'                                 => 'Stock',
@@ -2124,6 +2135,7 @@ $aLang = array(
 
 'OMVN_ERROR_REQUEST_FAILED'                                => 'Service unavailable, try again later... If this persists, please check that your shop can make outgoing connections.',
 'VERSION_UPDATE_LINK'                                         => 'http://www.oxid-esales.com/en/support-services/documentation-and-help/oxid-eshop/installation/oxid-eshop-update-installation/preparing-update.html',
+'MESSAGE_FOR_NEWLY_CREATED_USER_GROUPS' => 'If a user accesses the shop via a certain URL, which contains the ID of a user group, and then registers or logs into the shop, he will then be automatically assigned to the user group corresponding to the user group id contained in the original URL.<br> If you want to disable this behaviour for a user group, please navigate to Master settings->Core settings->System->Other settings and add the user group id to the "Prohibited User Groups for dynamic User Group assignment using DGR URL param" list.',
 );
 
 /*
